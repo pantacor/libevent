@@ -71,12 +71,7 @@ mbedtls_context_free(void *ssl, int flags)
 static int
 mbedtls_context_renegotiate(void *ssl)
 {
-#ifdef MBEDTLS_SSL_RENEGOTIATION
-	struct mbedtls_context *ctx = ssl;
-	return mbedtls_ssl_renegotiate(ctx->ssl);
-#else
 	return MBEDTLS_ERR_SSL_UNEXPECTED_MESSAGE;
-#endif
 }
 static int
 mbedtls_context_write(void *ssl, const unsigned char *buf, size_t len)
@@ -220,24 +215,22 @@ static void
 conn_closed(struct bufferevent_ssl *bev_ssl, int when, int errcode, int ret)
 {
 	int event = BEV_EVENT_ERROR;
-	char buf[100];
 
 	if (when & BEV_EVENT_READING && ret == 0) {
 		if (bev_ssl->flags & BUFFEREVENT_SSL_DIRTY_SHUTDOWN)
 			event = BEV_EVENT_EOF;
 	} else {
-		mbedtls_strerror(errcode, buf, sizeof(buf));
 		switch (errcode) {
 		case MBEDTLS_ERR_SSL_PEER_CLOSE_NOTIFY:
 			event = BEV_EVENT_EOF;
 			break;
 		case MBEDTLS_ERR_SSL_CLIENT_RECONNECT:
-			event_warnx("BUG: Unsupported feature %d: %s", errcode, buf);
+			event_warnx("BUG: Unsupported feature %d", errcode);
 			break;
 		default:
 			/* should be impossible; treat as normal error. */
 			event_warnx(
-				"BUG: Unexpected mbedtls error code %d: %s", errcode, buf);
+				"BUG: Unexpected mbedtls error code %d", errcode);
 			break;
 		}
 
