@@ -8,7 +8,7 @@ LOCAL_EXPORT_LDLIBS = -l:libevent.a -l:libevent_mbedtls.a
 
 LOCAL_LIBRARIES := mbedtls
 LOCAL_AUTOTOOLS_CONFIGURE_ARGS := \
-    --disable-debug-mode \
+    --enable-debug-mode \
     --disable-samples \
     --disable-libevent-regress \
     --disable-openssl \
