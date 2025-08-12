@@ -107,6 +107,10 @@ struct bufferevent {
 	/** Events that are currently enabled: currently EV_READ and EV_WRITE
 	    are supported. */
 	short enabled;
+
+	/** Callback to be called after bufferevent has finalized with no further events */
+	void (*finalize_cb)(struct evhttp_request *, void *);
+	void *finalize_arg;
 };
 
 #ifdef __cplusplus

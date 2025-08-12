@@ -748,6 +748,14 @@ bufferevent_decref_and_unlock_(struct bufferevent *bufev)
 	return 1;
 }
 
+void
+bufferevent_set_finalize_cb(struct bufferevent *bufev,
+    void (*cb)(struct bufferevent *, void *), void *arg)
+{
+	bufev->finalize_cb = cb;
+	bufev->finalize_arg = arg;
+}
+
 static void
 bufferevent_finalize_cb_(struct event_callback *evcb, void *arg_)
 {
@@ -798,6 +806,11 @@ bufferevent_finalize_cb_(struct event_callback *evcb, void *arg_)
 	 */
 	if (underlying)
 		bufferevent_decref_(underlying);
+
+	if ((*bufev->finalize_cb)) {
+		(*bufev->finalize_cb)(bufev, bufev->finalize_arg);
+		bufev->finalize_cb = NULL;
+	}
 }
 
 int

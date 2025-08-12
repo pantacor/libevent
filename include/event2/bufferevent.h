@@ -326,6 +326,17 @@ int bufferevent_get_priority(const struct bufferevent *bufev);
 EVENT2_EXPORT_SYMBOL
 void bufferevent_free(struct bufferevent *bufev);
 
+/**
+  Changes the finalize callback for a bufferevent.
+
+  @param bufev the bufferevent object for which to change the callback. bufev must not be NULL
+  @param cb callback to invoke when bufferevent is finialized with no pending events
+  @param arg an argument that will be supplied to the callback
+  @see bufferevent_new()
+**/
+EVENT2_EXPORT_SYMBOL
+void bufferevent_set_finalize_cb(struct bufferevent *bufev,
+    void (*cb)(struct bufferevent *, void *), void *arg);
 
 /**
   Changes the callbacks for a bufferevent.
